@@ -1,0 +1,49 @@
+$ mkdir burger_toppings
+$ cd burger_toppings
+$ pip install flask
+from flask import Flask, render_template, request
+
+app = Flask(__name__)
+
+TOPPINGS = ["Cheese", "Lettuce", "Tomato", "Onion", "Pickles", "Bacon", "Mushrooms"]
+
+@app.route('/', methods=['GET', 'POST'])
+def index():
+    selected_toppings = []
+
+    if request.method == 'POST':
+        selected_toppings = request.form.getlist('topping')
+
+    return render_template('index.html', toppings=TOPPINGS, selected_toppings=selected_toppings)
+
+
+if __name__ == '__main__':
+    app.run(debug=True)
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Burger Toppings</title>
+</head>
+<body>
+    <h1>Select your burger toppings</h1>
+    
+    <form action="/" method="post">
+        {% for topping in toppings %}
+            <input type="checkbox" name="topping" value="{{ topping }}"> {{ topping }}<br>
+        {% endfor %}
+        <input type="submit" value="Submit">
+    </form>
+
+    {% if selected_toppings %}
+    <h2>You selected:</h2>
+    <ul>
+        {% for topping in selected_toppings %}
+            <li>{{ topping }}</li>
+        {% endfor %}
+    </ul>
+    {% endif %}
+</body>
+</html>
+$ python app.py
